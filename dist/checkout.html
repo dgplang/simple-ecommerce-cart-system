@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Checkout</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+  <div class="max-w-3xl mx-auto p-6 bg-white mt-10 rounded shadow">
+    <h2 class="text-2xl font-bold mb-4">Checkout</h2>
+    <div id="cartItems" class="mb-6"></div>
+
+    <form id="paymentForm" class="space-y-4">
+      <div>
+        <label for="cardName" class="block font-medium">Cardholder Name</label>
+        <input type="text" id="cardName" required class="w-full px-3 py-2 border rounded" />
+      </div>
+      <div>
+        <label for="cardNumber" class="block font-medium">Card Number</label>
+        <input type="text" id="cardNumber" required class="w-full px-3 py-2 border rounded" />
+      </div>
+      <div class="flex space-x-4">
+        <div class="flex-1">
+          <label for="expiry" class="block font-medium">Expiry Date</label>
+          <input type="text" id="expiry" placeholder="MM/YY" required class="w-full px-3 py-2 border rounded" />
+        </div>
+        <div class="flex-1">
+          <label for="cvv" class="block font-medium">CVV</label>
+          <input type="text" id="cvv" required class="w-full px-3 py-2 border rounded" />
+        </div>
+      </div>
+      <button type="submit" class="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700">
+        Confirm Payment
+      </button>
+    </form>
+  </div>
+
+  <footer class="text-center py-4 mt-10">
+    <a href="https://github.com/your-github-username/your-repo" target="_blank" class="text-blue-600 underline">GitHub Link</a>
+  </footer>
+
+  <script>
+    const cart = JSON.parse(localStorage.getItem("cartItems")) || [];
+    const cartItemsDiv = document.getElementById("cartItems");
+
+    if (cart.length === 0) {
+      cartItemsDiv.innerHTML = "<p class='text-red-500'>Your cart is empty.</p>";
+    } else {
+        let itemsSum = 0;
+const list = cart.map(item => {
+  itemsSum += Number(item.price);
+  return `
+    <div class="flex justify-between border-b py-2">
+      <span>${item.name}</span>
+      <span>₦${Number(item.price).toLocaleString("en-NG", { minimumFractionDigits: 2 })}</span>
+    </div>
+  `;
+}).join("");
+
+cartItemsDiv.innerHTML = list;
+
+cartItemsDiv.innerHTML += `
+  <div class="flex justify-between border-b py-2 font-bold mt-4">
+    <span>Total</span>
+    <span>₦${itemsSum.toLocaleString("en-NG", { minimumFractionDigits: 2 })}</span>
+  </div>
+`;
+    }
+
+    document.getElementById("paymentForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      alert("Payment successful! Order has been placed.");
+
+      // Store order status in localStorage
+      localStorage.setItem("orderStatus", JSON.stringify({
+        paid: true,
+        timestamp: new Date().toISOString(),
+        cart: cart
+      }));
+
+      // Clear cart
+      localStorage.removeItem("cart");
+
+      // Redirect to success page
+      window.location.href = "success.html";
+    });
+  </script>
+</body>
+</html>
